@@ -2,7 +2,7 @@ angular
   .module('notOnShelf', [])
   .component('prmSearchResultAvailabilityLineAfter', {
   bindings: { parentCtrl: '<' },
-    controller: function controller($scope, $http, $element, $location, nosService, notOnShelfOptions, $httpParamSerializer) {
+    controller: function controller($scope, $location, nosService, notOnShelfOptions, $httpParamSerializer) {
       $scope.show=false;
         this.$onInit = function() {
           console.log(notOnShelfOptions.query_mappings.title);
@@ -31,15 +31,8 @@ angular
         };
     },
   template: '<div  ng-show="{{show}}" class="" style="margin-top:10px;"><p>Not on shelf? <a ng-href="{{url}}" target="_blank">Let us know.</a></p></div>'
-}).factory('nosService', ['$http',function($http){
+}).factory('nosService', [,function(){
   return{
-    getDbpwData: function (url) {
-      return $http({
-        method: 'GET',
-        url: url,
-        cache: true
-      })
-    },
     doesLibOwn: function($scope, notOnShelfOptions){
 
       /* check best location instead */
@@ -71,26 +64,21 @@ angular
       var callNumber=callNumber.replace(')','');
       return callNumber;
     },
-  getLocation: function($scope){
-    if ($scope.delCat=="Alma-E"){var location="Electronic Resource";}
-    else{
-      var mainLocation=$scope.$parent.$ctrl.result.pnx.delivery.bestlocation.mainLocation;
-      var subLocation=$scope.$parent.$ctrl.result.pnx.delivery.bestlocation.subLocation;
-      var location=mainLocation+" "+subLocation;
+    getLocation: function($scope){
+      if ($scope.delCat=="Alma-E"){var location="Electronic Resource";}
+      else{
+        var mainLocation=$scope.$parent.$ctrl.result.pnx.delivery.bestlocation.mainLocation;
+        var subLocation=$scope.$parent.$ctrl.result.pnx.delivery.bestlocation.subLocation;
+        var location=mainLocation+" "+subLocation;
+      }
+      return location;
+    },
+    buildUrl: function(url, params, $httpParamSerializer){
+      var serializedParams = $httpParamSerializer(params);
+       if (serializedParams.length > 0) {
+           url += ((url.indexOf('?') === -1) ? '?' : '&') + serializedParams;
+       }
+       return url;
     }
-    return location;
-  },
-  buildUrl: function(url, params, $httpParamSerializer){
-    var serializedParams = $httpParamSerializer(params);
-     if (serializedParams.length > 0) {
-         url += ((url.indexOf('?') === -1) ? '?' : '&') + serializedParams;
-     }
-     return url;
-  }
 }
-}]).run(
-  ($http) => {
-    // Necessary for requests to succeed...not sure why
-    $http.defaults.headers.common = { 'X-From-ExL-API-Gateway': undefined }
-  },
-);
+}]);
