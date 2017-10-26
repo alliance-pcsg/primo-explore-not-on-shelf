@@ -1,5 +1,5 @@
 # primo-explore-not-on-shelf
-Provides a link to an external page/form with title, author, location, and call number. Library staff can then use this information for searches.
+Provides a link to an external page/form with title, author, location, and call number. Library staff can then use this information to search for missing items.
 
 ## Features
 Creates a link underneath the Real Time Availability in the Primo Explore full display for a record. Link is designed to include author, title, call number, and location.
@@ -26,7 +26,7 @@ Creates a link underneath the Real Time Availability in the Primo Explore full d
 Once this package is installed, add `notOnShelf` as a dependency for your custom module definition.
 
 ```js
-var app = angular.module('viewCustom', ['notOnShelf']) 
+var app = angular.module('viewCustom', ['notOnShelf'])
 ```
 
 Note: If you're using the `--browserify` build option, you will need to first import the module with:

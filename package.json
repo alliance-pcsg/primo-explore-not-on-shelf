@@ -1,0 +1,22 @@
+{
+  "name": "primo-explore-not-on-shelf",
+  "version": "1.0.0",
+  "description": "Provides a link to an external page/form with title, author, location, and call number. Library staff can then use this information for searches.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/alliance-pcsg/primo-explore-not-on-shelf.git"
+  },
+  "keywords": [
+    "primo-explore"
+  ],
+  "author": "Jeremy McWilliams",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/alliance-pcsg/primo-explore-not-on-shelf/issues"
+  },
+  "homepage": "https://github.com/alliance-pcsg/primo-explore-not-on-shelf#readme"
+}

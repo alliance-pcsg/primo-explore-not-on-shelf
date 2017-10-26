@@ -30,7 +30,7 @@ angular
           }
         };
     },
-  template: '<div  ng-show="{{show}}" class="" style="margin-top:10px;"><p>Not on shelf? <a ng-href="{{url}}" target="_blank">Let us know.</a></p></div>'
+  template: '<div  ng-show="show" class="" style="margin-top:10px;"><p>Not on shelf? <a ng-href="url" target="_blank">Let us know.</a></p></div>'
 }).factory('nosService', [,function(){
   return{
     doesLibOwn: function($scope, notOnShelfOptions){
