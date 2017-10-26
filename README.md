@@ -46,7 +46,7 @@ You can configure the banner by passing a configuration object. All properties a
 |-----------|--------------|-----------------------------------------------------------------------------------------|
 | `libs` | array       | Whitelist of library codes for which the links should appear                                               |
 | `urlBase` | string       | Base url for link. This can include additional GET parameters as needed.                                               |
-| `query_mappings` | object       | Maps the GET URL fields for title, author, callnumber, location. For example, if you want your final URL to have the title value associated with "myTitle" (resulting in a URL parameter ...&myTitle=<TheItemTitle>&....), then the title portion of the object should read: 'title' : 'myTitle'.                                               |
+| `query_mappings` | object       | Maps the GET URL fields for title, author, callnumber, location. For example, if you want your final URL to have the title value associated with "myTitle" (resulting in a URL parameter ...&myTitle=TheItemTitle&....), then the title portion of the object should read: 'title' : 'myTitle'.                                               |
 
 
 The code below adds a banner similar to the above image.
