@@ -1,6 +1,6 @@
 angular.module('notOnShelf', []).component('prmSearchResultAvailabilityLineAfter', {
   bindings: { parentCtrl: '<' },
-  controller: function controller($scope, $http, $element, $location, nosService, notOnShelfOptions, $httpParamSerializer) {
+  controller: function controller($scope, $location, nosService, notOnShelfOptions, $httpParamSerializer) {
     $scope.show = false;
     this.$onInit = function () {
       console.log(notOnShelfOptions.query_mappings.title);
@@ -13,7 +13,6 @@ angular.module('notOnShelf', []).component('prmSearchResultAvailabilityLineAfter
       var valid = nosService.doesLibOwn($scope, notOnShelfOptions);
       console.log(valid);
       if (fulldisplay == true && valid == true) {
-        var _params;
 
         $scope.show = true;
         $scope.title = $scope.$parent.$ctrl.result.pnx.addata.btitle[0];
@@ -21,24 +20,21 @@ angular.module('notOnShelf', []).component('prmSearchResultAvailabilityLineAfter
         $scope.location = nosService.getLocation($scope);
         $scope.callnumber = nosService.getCallNumber($scope);
         var urlBase = notOnShelfOptions.urlBase;
-        var params = (_params = {}, _defineProperty(_params, notOnShelfOptions.query_mappings.title, $scope.title), _defineProperty(_params, notOnShelfOptions.query_mappings.author, $scope.author), _defineProperty(_params, notOnShelfOptions.query_mappings.location, $scope.location), _defineProperty(_params, notOnShelfOptions.query_mappings.callnumber, $scope.callnumber), _params);
+        var params={
+                      [notOnShelfOptions.query_mappings.title] : $scope.title,
+                      [notOnShelfOptions.query_mappings.author] : $scope.author,
+                      [notOnShelfOptions.query_mappings.location]: $scope.location,
+                      [notOnShelfOptions.query_mappings.callnumber]: $scope.callnumber
+        }
 
-        console.log(params, urlBase);
         $scope.url = nosService.buildUrl(urlBase, params, $httpParamSerializer);
-        console.log($scope.url);
+
       }
     };
   },
   template: '<div  ng-show="{{show}}" class="" style="margin-top:10px;"><p>Not on shelf? <a ng-href="{{url}}" target="_blank">Let us know.</a></p></div>'
-}).factory('nosService', ['$http', function ($http) {
+}).factory('nosService', [function () {
   return {
-    getDbpwData: function getDbpwData(url) {
-      return $http({
-        method: 'GET',
-        url: url,
-        cache: true
-      });
-    },
     doesLibOwn: function doesLibOwn($scope, notOnShelfOptions) {
 
       /* check best location instead */
@@ -100,7 +96,4 @@ angular.module('notOnShelf', []).component('prmSearchResultAvailabilityLineAfter
       return url;
     }
   };
-}]).run(function ($http) {
-  // Necessary for requests to succeed...not sure why
-  $http.defaults.headers.common = { 'X-From-ExL-API-Gateway': undefined };
-});
+}]);
