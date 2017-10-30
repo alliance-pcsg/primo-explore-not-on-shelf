@@ -1,8 +1,7 @@
-angular.module('notonshelf', []).component('prmSearchResultAvailabilityLineAfter', {
+angular.module('notOnShelf', []).component('prmSearchResultAvailabilityLineAfter', {
   bindings: { parentCtrl: '<' },
   controller: function controller($scope, $http, $element, $location, nosService, notOnShelfOptions, $httpParamSerializer) {
     $scope.show = false;
-    console.log("NOS");
     this.$onInit = function () {
       console.log(notOnShelfOptions.query_mappings.title);
       var titleParam = notOnShelfOptions.query_mappings.title;
