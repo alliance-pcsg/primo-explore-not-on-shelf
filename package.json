@@ -1,6 +1,6 @@
 {
   "name": "primo-explore-not-on-shelf",
-  "version": "1.1.0",
+  "version": "1.1.1",
   "description": "Provides a link to an external page/form with title, author, location, and call number. Library staff can then use this information for searches.",
   "main": "index.js",
   "scripts": {
