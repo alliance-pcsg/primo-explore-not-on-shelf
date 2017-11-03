@@ -3,6 +3,7 @@ angular.module('notOnShelf', []).component('prmSearchResultAvailabilityLineAfter
   controller: function controller($scope, $location, nosService, notOnShelfOptions, $httpParamSerializer) {
     $scope.show = false;
     this.$onInit = function () {
+      console.log("NOS!!!!");
       console.log(notOnShelfOptions.query_mappings.title);
       var titleParam = notOnShelfOptions.query_mappings.title;
       if ($location.path() === '/fulldisplay') {
@@ -10,9 +11,14 @@ angular.module('notOnShelf', []).component('prmSearchResultAvailabilityLineAfter
       } else {
         var fulldisplay = false;
       }
+
+      var format=nosService.getFormat($scope);
+      console.log(format);
+      if (format=="journal"){var formatCheck=false;}
+      else{var formatCheck=true;}
       var valid = nosService.doesLibOwn($scope, notOnShelfOptions);
       console.log(valid);
-      if (fulldisplay == true && valid == true) {
+      if (fulldisplay == true && valid == true && formatCheck == true) {
 
         $scope.show = true;
         $scope.title = $scope.$parent.$ctrl.result.pnx.addata.btitle[0];
@@ -40,6 +46,8 @@ angular.module('notOnShelf', []).component('prmSearchResultAvailabilityLineAfter
       /* check best location instead */
 
       var bestloc = $scope.$parent.$ctrl.result.pnx.delivery.hasOwnProperty("bestlocation");
+      console.log($scope);
+      console.log(bestloc);
       if (bestloc == true) {
         var inst = $scope.$parent.$ctrl.result.pnx.delivery.bestlocation.mainLocation;
 
@@ -67,6 +75,10 @@ angular.module('notOnShelf', []).component('prmSearchResultAvailabilityLineAfter
         var author = "N/A";
       }
       return author;
+    },
+    getFormat: function getFormat($scope) {
+      var format = $scope.$parent.$ctrl.result.pnx.addata.format[0];
+      return format;
     },
     getCallNumber: function getCallNumber($scope) {
 
