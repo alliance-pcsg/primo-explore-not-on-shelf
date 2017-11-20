@@ -1,4 +1,4 @@
-angular.module('NOS', []).component('prmSearchResultAvailabilityLineAfter', {
+angular.module('notOnShelf', []).component('prmSearchResultAvailabilityLineAfter', {
   bindings: { parentCtrl: '<' },
   controller: ['$scope', '$location',  'nosOptions', 'nosService', '$httpParamSerializer',
     function($scope, $location,  nosOptions, nosService, $httpParamSerializer){
