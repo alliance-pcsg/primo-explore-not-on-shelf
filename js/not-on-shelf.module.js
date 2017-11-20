@@ -1,111 +1,118 @@
-angular.module('notOnShelf', []).component('prmSearchResultAvailabilityLineAfter', {
+angular.module('NOS', []).component('prmSearchResultAvailabilityLineAfter', {
   bindings: { parentCtrl: '<' },
-  controller: function controller($scope, $location, nosService, notOnShelfOptions, $httpParamSerializer) {
-    $scope.show = false;
-    this.$onInit = function () {
-      console.log("NOS!!!!");
-      console.log(notOnShelfOptions.query_mappings.title);
-      var titleParam = notOnShelfOptions.query_mappings.title;
-      if ($location.path() === '/fulldisplay') {
-        var fulldisplay = true;
-      } else {
-        var fulldisplay = false;
-      }
+  controller: ['$scope', '$location',  'nosOptions', 'nosService', '$httpParamSerializer',
+    function($scope, $location,  nosOptions, nosService, $httpParamSerializer){
+      $scope.checkBestLoc = function() {
+        if (nosService.checkPage($location)){
+          $scope.bestlocation=$scope.$parent.$ctrl.result.delivery.bestlocation;
+          if (!$scope.bestlocation){
+            return false;
+          }
+          else{
+            var mainLocation = $scope.bestlocation.mainLocation
+            if (!nosOptions[0][mainLocation]){
+              return false;  //not on
+            }
+            else{
+              var subLocationCode=nosService.getSubLocationCode($scope);
+              var codes=nosOptions[0][mainLocation][0]["locationCodes"]
+              if (nosService.subLocationCodeCheck(subLocationCode, codes)){
+                var callNumber=nosService.getCallNumber($scope);
+                var author=nosService.getAuthor($scope);
+                var title=nosService.getTitle($scope);
+                var location=nosService.getLocation($scope);
 
-      var format=nosService.getFormat($scope);
-      console.log(format);
-      if (format=="journal"){var formatCheck=false;}
-      else{var formatCheck=true;}
-      var valid = nosService.doesLibOwn($scope, notOnShelfOptions);
-      console.log(valid);
-      if (fulldisplay == true && valid == true && formatCheck == true) {
+                var params={
+                  [nosOptions[0][mainLocation][0].query_mappings[0].title] : title,
+                  [nosOptions[0][mainLocation][0].query_mappings[0].author] : author,
+                  [nosOptions[0][mainLocation][0].query_mappings[0].location]: location,
+                  [nosOptions[0][mainLocation][0].query_mappings[0].callnumber]: callNumber
+                }
+                var urlBase=nosOptions[0][mainLocation][0].urlBase;
+                $scope.url=nosService.buildUrl(urlBase, params, $httpParamSerializer);
+                return true;
 
-        $scope.show = true;
-        $scope.title = $scope.$parent.$ctrl.result.pnx.addata.btitle[0];
-        $scope.author = nosService.getAuthor($scope);
-        $scope.location = nosService.getLocation($scope);
-        $scope.callnumber = nosService.getCallNumber($scope);
-        var urlBase = notOnShelfOptions.urlBase;
-        var params={
-                      [notOnShelfOptions.query_mappings.title] : $scope.title,
-                      [notOnShelfOptions.query_mappings.author] : $scope.author,
-                      [notOnShelfOptions.query_mappings.location]: $scope.location,
-                      [notOnShelfOptions.query_mappings.callnumber]: $scope.callnumber
+              }
+              else{
+                return false;
+              }
+            }
+          }
         }
-
-        $scope.url = nosService.buildUrl(urlBase, params, $httpParamSerializer);
-
-      }
-    };
-  },
-  template: '<div  ng-show="{{show}}" class="" style="margin-top:10px;"><p>Not on shelf? <a ng-href="{{url}}" target="_blank">Let us know.</a></p></div>'
-}).factory('nosService', [function () {
-  return {
-    doesLibOwn: function doesLibOwn($scope, notOnShelfOptions) {
-
-      /* check best location instead */
-
-      var bestloc = $scope.$parent.$ctrl.result.pnx.delivery.hasOwnProperty("bestlocation");
-      console.log($scope);
-      console.log(bestloc);
-      if (bestloc == true) {
-        var inst = $scope.$parent.$ctrl.result.pnx.delivery.bestlocation.mainLocation;
-
-        var libs = notOnShelfOptions.libs;
-        console.log("libs:" + libs);
-
-        var check = libs.indexOf(inst);
-        console.log("valid check");
+        else{
+          /* brief result */
+          return false;
+        }
+      };
+    }],
+    template: '<div  ng-show="checkBestLoc()"  style="margin-top:10px;"><p>Not on shelf? <a ng-href="{{url}}" target="_blank">Let us know.</a></p></div>'
+    }).factory('nosService', [function () {
+    return {
+      buildUrl: function (url, params, $httpParamSerializer) {
+        var serializedParams = $httpParamSerializer(params);
+        if (serializedParams.length > 0) {
+          url += (url.indexOf('?') === -1 ? '?' : '&') + serializedParams;
+        }
+        return url;
+      },
+      checkPage: function ($location){
+        if ($location.path() === '/fulldisplay') {
+          return true;
+        } else {
+          return false;
+        }
+      },
+      getAuthor: function getAuthor($scope) {
+        var obj = $scope.$parent.$ctrl.result.pnx.addata;
+        console.log(obj);
+        if (obj.hasOwnProperty("aulast")) {
+          var author = encodeURIComponent($scope.$parent.$ctrl.result.pnx.addata.aulast[0]);
+        } else {
+          var author = "N/A";
+        }
+        return author;
+      },
+      getTitle: function getTitle($scope) {
+        var obj = $scope.$parent.$ctrl.result.pnx.addata;
+        if (obj.hasOwnProperty("btitle")) {
+          var title = $scope.$parent.$ctrl.result.pnx.addata.btitle[0];
+        } else {
+          var title = "N/A";
+        }
+        return title;
+      },
+      getCallNumber: function ($scope) {
+        var cn = $scope.$parent.$ctrl.result.delivery.bestlocation.callNumber;
+        var callNumber = cn.replace('(', '');
+        var callNumber = callNumber.replace(')', '');
+        return callNumber;
+      },
+      getLocation: function getLocation($scope) {
+        if ($scope.delCat == "Alma-E") {
+          var location = "Electronic Resource";
+        } else {
+          var mainLocation = $scope.$parent.$ctrl.result.delivery.bestlocation.mainLocation;
+          var subLocation = $scope.$parent.$ctrl.result.delivery.bestlocation.subLocation;
+          var location = mainLocation + " " + subLocation;
+        }
+        return location;
+      },
+      subLocationCodeCheck: function(code, codes){
+        var check = codes.indexOf(code);
         console.log(check);
         if (check == "-1") {
           return false;
         } else {
           return true;
         }
-      } else {
-        return false;
-      }
-    },
-    getAuthor: function getAuthor($scope) {
-
-      var obj = $scope.$parent.$ctrl.result.pnx.addata;
-      if (obj.hasOwnProperty("aulast")) {
-        var author = encodeURIComponent($scope.$parent.$ctrl.result.pnx.addata.aulast[0]);
-      } else {
-        var author = "N/A";
-      }
-      return author;
-    },
-    getFormat: function getFormat($scope) {
-      var format = $scope.$parent.$ctrl.result.pnx.addata.format[0];
-      return format;
-    },
-    getCallNumber: function getCallNumber($scope) {
-
-      var cn = $scope.$parent.$ctrl.result.pnx.delivery.bestlocation.callNumber;
-      var callNumber = cn.replace('(', '');
-      var callNumber = callNumber.replace(')', '');
-      return callNumber;
-    },
-    getLocation: function getLocation($scope) {
-      if ($scope.delCat == "Alma-E") {
-        var location = "Electronic Resource";
-      } else {
-        var mainLocation = $scope.$parent.$ctrl.result.pnx.delivery.bestlocation.mainLocation;
-        var subLocation = $scope.$parent.$ctrl.result.pnx.delivery.bestlocation.subLocation;
-        var location = mainLocation + " " + subLocation;
-      }
-      return location;
-    },
-    buildUrl: function buildUrl(url, params, $httpParamSerializer) {
-
-      var serializedParams = $httpParamSerializer(params);
-
-      if (serializedParams.length > 0) {
-        url += (url.indexOf('?') === -1 ? '?' : '&') + serializedParams;
-      }
-
-      return url;
-    }
-  };
-}]);
+      },
+      getSubLocationCode: function ($scope) {
+        if ($scope.delCat == "Alma-E") {
+          var subLocationCode = "Electronic Resource";
+        } else {
+          var subLocationCode = $scope.$parent.$ctrl.result.delivery.bestlocation.subLocationCode;
+        }
+        return subLocationCode;
+      },
+    };
+  }]);
