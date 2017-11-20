@@ -70,6 +70,22 @@ app.value('nosOptions',[{
   }]
 }])
 ```
+Configuation for just one library would look like this:
+
+```js
+app.value('nosOptions',[{
+  "Watzek": [{
+    "urlBase": "https://docs.google.com/forms/d/e/1FAIpQLSdBvdqmK0z1mHhg-ATiCHT94JVBuwdaaHzpyZJcK3XBGEP-IA/viewform?usp=pp_url",
+    "query_mappings" : [{
+      'title': 'entry.956660822',
+      'author': 'entry.1791543904',
+      'callnumber': 'entry.865809076',
+      'location': 'entry.431935401'
+    }],
+    "locationCodes": ["wmain","wvid","wref","wdis","wgovd","wgovav","wjuv","weasy","wnew","wos","wbalc","wluo"]
+  }]
+}])
+```
 
 <!-- ## Running tests
 1. Clone the repo
