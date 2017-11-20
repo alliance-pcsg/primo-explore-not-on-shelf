@@ -5,7 +5,7 @@ angular.module('NOS', []).component('prmSearchResultAvailabilityLineAfter', {
       $scope.checkBestLoc = function() {
         if (nosService.checkPage($location)){
           $scope.bestlocation=$scope.$parent.$ctrl.result.delivery.bestlocation;
-          if (!$scope.bestlocation){
+          if (!$scope.bestlocation || $scope.bestlocation.availabilityStatus=="unavailable"){
             return false;
           }
           else{
