@@ -1,5 +1,5 @@
 {
-  "name": "primo-explore-not-on-shelf",
+  "name": "@orbis-cascade/primo-explore-not-on-shelf",
   "version": "2.0.0",
   "description": "Provides a link to an external page/form with title, author, location, and call number. Library staff can then use this information for searches.",
   "main": "index.js",
